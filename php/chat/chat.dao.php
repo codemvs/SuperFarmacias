@@ -7,32 +7,88 @@ class ChatDAO {
     }
     public function agregarUsuarioClienteDao($usuario)
     {
+        $con = null;
         try { 
-            $query = 'INSERT INTO usuarios(nombre, correo, id_tipo_usuario) 
-            VALUES (:nombre, :correo, :id_tipo_usuario)';            
-
-            $respQuery = $this->database->connect()->prepare($query);
+            $query = 'INSERT INTO tblusuario(nombre, correo, idTipoUsuario) 
+            VALUES (:nombre, :correo, :id_tipo_usuario);';            
+            $con = $this->database->connect();
+            $respQuery = $con->prepare($query);
             
+            $con ->beginTransaction();
+
             $respQuery->execute([                
                 'nombre'=>$usuario->nombre,
                 'correo'=>$usuario->correo,
-                'id_tipo_usuario'=>$usuario->id_tipo_usuario                    
+                'id_tipo_usuario'=>$usuario->idTipoUsuario                    
             ]);
-                
-
+            $idUsuario = $con->lastInsertId();
+            $con ->commit();
+            return $idUsuario;
         }catch(PDOException $ex){
+            if($con != null){
+                $gbd->rollBack();
+            }
             throw new Exception($ex->getMessage());
         }
-
         
+    }
+    public function agregarCanalUsuario($idUsuario)
+    {
+        $ID_DEFAULT_ADMIN = 1; // Usuario default
+        $con = null;
+        try { 
+            $query = 'INSERT INTO tblcanal(idAdmin, idCliente) 
+            VALUES (:idAdmin, :idCliente);';            
+                $con = $this->database->connect();
+                $respQuery = $con->prepare($query);
+
+                $con ->beginTransaction();
+                $respQuery->execute([                
+                    'idAdmin'=>$ID_DEFAULT_ADMIN,
+                    'idCliente'=>$idUsuario                
+                ]);
+                $idCanal = $con->lastInsertId();
+                $con ->commit();
+
+                return $idCanal;
+        }catch(PDOException $ex){
+            if($con!=null){
+                $con ->rollBack();
+            }
+            throw new Exception($ex->getMessage());
+        }
+    }
+    public function enviarMensajes($idUsuario, $idCanal, $mensaje)
+    {        
+        $con = null;
+        try {             
+            $query = 'INSERT INTO tblmensaje(idUsuario, idCanal,mensaje) 
+            VALUES (:idUsuario,:idCanal,:mensaje);';            
+            $con = $this->database->connect();
+            $respQuery = $con->prepare($query);
+
+            $con ->beginTransaction();
+            $respQuery->execute([                
+                'idUsuario'=>$idUsuario,
+                'idCanal'=>$idCanal,
+                'mensaje'=>$mensaje                                             
+            ]);
+            $con->commit();
+
+        }catch(PDOException $ex){
+            if($con!=null){
+                $con ->rollBack();
+            }
+            throw new Exception($ex->getMessage());
+        }
     }
     public function buscarUsuarioPorCorreoDao($correo)
     {
         try { 
             $usuario = new Usuario();
 
-            $query = 'SELECT id_usuarios, nombre, correo, id_tipo_usuario 
-                        FROM usuarios
+            $query = 'SELECT idUsuario, nombre, correo, idTipoUsuario 
+                        FROM tblusuario
                         WHERE correo =:correo LIMIT 1;';            
 
             $respQuery = $this->database->connect()->prepare($query);
@@ -50,10 +106,48 @@ class ChatDAO {
 
             $usuarioDB = $respQuery->fetchAll()[0];
 
-            $usuario -> id_usuario = $usuarioDB['id_usuarios'];
+            $usuario -> idUsuario = $usuarioDB['idUsuario'];
             $usuario -> nombre = $usuarioDB['nombre'];
             $usuario -> correo = $usuarioDB['correo'];
-            $usuario -> id_tipo_usuario = $usuarioDB['id_tipo_usuario'];
+            $usuario -> idTipoUsuario = $usuarioDB['idTipoUsuario'];
+            
+            return $usuario;
+
+        }catch(PDOException $ex){
+            throw new Exception($ex->getMessage());
+        }
+
+        
+    }
+
+    public function oobtenerUsuariosClienteCanal()
+    {
+        try { 
+            $usuario = new Usuario();
+
+            $query = 'SELECT c.idCanal, u.idUsuario,u.nombre, u.correo, u.idTipoUsuario,
+                             (SELECT COUNT(1) FROM tblmensaje WHERE idCanal = c.idCanal ) as mensajeNoLeido 
+                                FROM tblcanal c 
+                                INNER JOIN tblusuario u 
+                    ON c.idCliente = u.idUsuario;';            
+
+            $respQuery = $this->database->connect()->prepare($query);
+            
+            $respQuery->execute();
+            $respQuery->setFetchMode(PDO::FETCH_ASSOC);
+
+            $totalEncontrado = $respQuery->rowCount();
+
+            if($totalEncontrado == 0){
+                return null;
+            }
+
+            $usuarioDB = $respQuery->fetchAll()[0];
+
+            $usuario -> idUsuario = $usuarioDB['idUsuario'];
+            $usuario -> nombre = $usuarioDB['nombre'];
+            $usuario -> correo = $usuarioDB['correo'];
+            $usuario -> idTipoUsuario = $usuarioDB['idTipoUsuario'];
             
             return $usuario;
 

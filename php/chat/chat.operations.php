@@ -28,18 +28,31 @@ class ChatOperations {
 
             $usuario -> nombre = $postUsuario['nombre'];
             $usuario -> correo = $postUsuario['correo'];
-            $usuario -> id_tipo_usuario = $this->USUARIO_NORMAL;
+            $usuario -> idTipoUsuario = $this->USUARIO_NORMAL;
 
             // validar si usuario existe
             $usuarioDB = $this->chat_dao-> buscarUsuarioPorCorreoDao( $usuario -> correo );
-            $mensaje = 'Usario ya existe';
-            if( $usuarioDB == null ){
-                $this->chat_dao-> agregarUsuarioClienteDao( $usuario );
-                $mensaje = 'El usuario se agrego con éxito';
+            
+            if( $usuarioDB == null ) {
+
+                $idUsuarioDB = $this->chat_dao-> agregarUsuarioClienteDao( $usuario );
+
+                // crear nuevo usuario sala chat
+                $idCanal = $this->chat_dao-> agregarCanalUsuario( $idUsuarioDB );
+
+                // Agregar primer mensaje Admin
+                $idAdmin = 1;
+                $this->chat_dao->enviarMensajes( $idAdmin,
+                 $idCanal,
+                 'Hola '.$usuario->nombre.' ¿en que le puedo ayudar?'
+                );
+                
+                $usuario -> idUsuario = $idUsuarioDB;
+                $usuarioDB = $usuario;
             }
 
             $responseModel ->success = true;            
-            $responseModel ->data = $mensaje;
+            $responseModel ->data = $usuarioDB;
             
             echo json_encode($responseModel);
 

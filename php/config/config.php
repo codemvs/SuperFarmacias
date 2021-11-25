@@ -1,6 +1,6 @@
 <?php
 
-define('URL', '../myapplication/');
+// define('URL', '../myapplication/');
 
 define('HOST', 'localhost');
 define('DB', 'superfarmacia');

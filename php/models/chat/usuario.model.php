@@ -1,10 +1,10 @@
 <?php 
 
 class Usuario {
-    public $id_usuario;
+    public $idUsuario;
     public $nombre;
     public $correo;
-    public $id_tipo_usuario;  
+    public $idTipoUsuario;  
 }
 
 ?>
