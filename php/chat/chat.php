@@ -16,6 +16,9 @@ try{
             case 'agregar_usuario_cliente':
                 $chatOperations->agregarUsuarioCliente($_POST);
             break;
+            case 'obtener_usuarios':
+                $chatOperations->obtenerUsuarios();
+            break;
             default:
             throw new Exception('Request method invalid');  
             break;

@@ -60,6 +60,21 @@ class ChatOperations {
             throw $e;
         }
     }
+    public function obtenerUsuarios(){
+        try{
+            $responseModel = new ResponseModel();
+            
+            $usuarios = $this->chat_dao -> obtenerUsuariosClienteCanal();
+
+            $responseModel ->success = true;            
+            $responseModel ->data = json_encode($usuarios);
+            
+            echo json_encode($responseModel);
+
+        }catch(Exception $e){
+            throw $e;
+        }
+    }
     private function createException($message){
         throw new Exception($message);
     }

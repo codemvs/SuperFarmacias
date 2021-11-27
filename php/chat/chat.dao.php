@@ -120,16 +120,17 @@ class ChatDAO {
         
     }
 
-    public function oobtenerUsuariosClienteCanal()
+    public function obtenerUsuariosClienteCanal()
     {
         try { 
-            $usuario = new Usuario();
+            
 
             $query = 'SELECT c.idCanal, u.idUsuario,u.nombre, u.correo, u.idTipoUsuario,
                              (SELECT COUNT(1) FROM tblmensaje WHERE idCanal = c.idCanal ) as mensajeNoLeido 
                                 FROM tblcanal c 
                                 INNER JOIN tblusuario u 
-                    ON c.idCliente = u.idUsuario;';            
+                    ON c.idCliente = u.idUsuario
+                    ORDER BY c.idCanal DESC;';            
 
             $respQuery = $this->database->connect()->prepare($query);
             
@@ -142,14 +143,9 @@ class ChatDAO {
                 return null;
             }
 
-            $usuarioDB = $respQuery->fetchAll()[0];
-
-            $usuario -> idUsuario = $usuarioDB['idUsuario'];
-            $usuario -> nombre = $usuarioDB['nombre'];
-            $usuario -> correo = $usuarioDB['correo'];
-            $usuario -> idTipoUsuario = $usuarioDB['idTipoUsuario'];
+            $usuariosDB = $respQuery->fetchAll();
             
-            return $usuario;
+            return $usuariosDB;
 
         }catch(PDOException $ex){
             throw new Exception($ex->getMessage());

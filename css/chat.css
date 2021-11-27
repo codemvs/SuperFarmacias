@@ -4,6 +4,11 @@ body {
    -moz-osx-font-smoothing: grayscale;
    text-rendering: optimizeLegibility;
 }
+.nombre-tienda {
+    font-weight: 700;
+    font-size: 19px;
+    color: #6e6f78;
+}
  .container {
    margin: 60px auto;
    background: #fff;
