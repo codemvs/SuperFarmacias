@@ -87,8 +87,10 @@ class ChatDAO {
         try { 
             $usuario = new Usuario();
 
-            $query = 'SELECT idUsuario, nombre, correo, idTipoUsuario 
-                        FROM tblusuario
+            $query = 'SELECT idUsuario, nombre, correo, idTipoUsuario, c.idCanal 
+                        FROM tblusuario u 
+                        left join tblcanal c 
+                        on u.idUsuario = c.idCliente
                         WHERE correo =:correo LIMIT 1;';            
 
             $respQuery = $this->database->connect()->prepare($query);
@@ -110,6 +112,7 @@ class ChatDAO {
             $usuario -> nombre = $usuarioDB['nombre'];
             $usuario -> correo = $usuarioDB['correo'];
             $usuario -> idTipoUsuario = $usuarioDB['idTipoUsuario'];
+            $usuario -> idCanal = $usuarioDB['idCanal'];
             
             return $usuario;
 
@@ -146,6 +149,36 @@ class ChatDAO {
             $usuariosDB = $respQuery->fetchAll();
             
             return $usuariosDB;
+
+        }catch(PDOException $ex){
+            throw new Exception($ex->getMessage());
+        }
+
+        
+    }
+    public function obtenerMensajesPorCanal($idCanal)
+    {
+        try { 
+            
+
+            $query = 'SELECT * FROM tblmensaje WHERE idCanal = :idCanal;';            
+
+            $respQuery = $this->database->connect()->prepare($query);
+            
+            $respQuery->execute([
+                'idCanal'=>$idCanal
+            ]);
+            $respQuery->setFetchMode(PDO::FETCH_ASSOC);
+
+            $totalEncontrado = $respQuery->rowCount();
+
+            if($totalEncontrado == 0){
+                return null;
+            }
+
+            $mensajes = $respQuery->fetchAll();
+            
+            return $mensajes;
 
         }catch(PDOException $ex){
             throw new Exception($ex->getMessage());

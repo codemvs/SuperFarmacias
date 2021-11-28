@@ -35,7 +35,7 @@
 			</div>
 			<div class="form-group">
 				<label for="txtCorreo">Correo:</label>
-				<input id="txtCorreo" class="form-control" placeholder="eje. correo@example.com">
+				<input id="txtCorreo" class="form-control" placeholder="eje. correo@example.com" value="superfarmaciachicontepec@gmail.com">
 			</div>
 		</div>
   
@@ -54,11 +54,9 @@
 	  <div class="col-md-4 border-right">
 		
 		<div class="settings-tray">
-		  <span class="nombre-tienda">Super Farmacia</span>
+		  <span class="nombre-tienda" id="nombre-tienda">Super Farmacia</span>
 		  <span class="settings-tray--right">
 			<i class="material-icons">cached</i>
-			<i class="material-icons">message</i>
-			<i class="material-icons">menu</i>
 		  </span>
 		</div>
 		
@@ -68,6 +66,7 @@
 			<input placeholder="Search here" type="text">
 		  </div>
 		</div>
+		
 		<div id="_usuarios"></div>
 
 	  </div>
@@ -78,40 +77,22 @@
 			
 			<div class="text">
 			  <h6>Sala de chat</h6>
-			  <p class="text-muted">Te escuchamos, comentanos tus dudas</p>
+			  <p class="text-muted">Te escuchamos, coméntanos tus dudas</p>
 			</div>
 			<span class="settings-tray--right">
 			  <i class="material-icons">cached</i>
-			  <i class="material-icons">message</i>
-			  <i class="material-icons">menu</i>
 			</span>
 		  </div>
 		</div>
-		
-		  <div class="row no-gutters">
-			<div class="col-md-3 offset-md-9">
-			  <div class="chat-bubble chat-bubble--right">
-				Hello dude!
-			  </div>
-			</div>
-		  </div>
-		  
-		  <div class="row no-gutters">
-			<div class="col-md-3">
-			  <div class="chat-bubble chat-bubble--left">
-				Hello dude!
-			  </div>
-			</div>
-		  </div>
-		  
+
+		<div id="_mensajes"></div>
 
 		  <div class="row">
 			<div class="col-12">
 			  <div class="chat-box-tray">
-				<i class="material-icons">sentiment_very_satisfied</i>
-				<input type="text" placeholder="Type your message here...">
-				<!-- <i class="material-icons">mic</i> -->
-				<i class="material-icons">send</i>
+				<!-- <i class="material-icons">sentiment_very_satisfied</i> -->
+				<input type="text" placeholder="Escriba su comentario aqui" id="txtMensaje">				
+				<i class="material-icons" id="btnEnviarMensaje" title="Envíar mensaje">send</i>
 			  </div>
 			</div>
 		  </div>

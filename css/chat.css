@@ -1,3 +1,6 @@
+#btnEnviarMensaje {
+  cursor: pointer;
+}
 body {
    background-color: #3498db;
    -webkit-font-smoothing: antialiased;
@@ -78,6 +81,10 @@ body {
  .friend-drawer--grey {
    background: #eee;
 }
+.settings-tray .friend-drawer .text {
+  margin-left: 12px;
+  width: 90%;
+}
  .friend-drawer .text {
    margin-left: 12px;
    width: 70%;
@@ -141,7 +148,7 @@ body {
      opacity: 1;
   }
 }
- .offset-md-9 .chat-bubble {
+ .bubble-right .chat-bubble {
    background: #74b9ff;
    color: #fff;
 }

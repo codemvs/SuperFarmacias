@@ -48,6 +48,7 @@ class ChatOperations {
                 );
                 
                 $usuario -> idUsuario = $idUsuarioDB;
+                $usuario -> idCanal = $idCanal;
                 $usuarioDB = $usuario;
             }
 
@@ -67,8 +68,58 @@ class ChatOperations {
             $usuarios = $this->chat_dao -> obtenerUsuariosClienteCanal();
 
             $responseModel ->success = true;            
-            $responseModel ->data = json_encode($usuarios);
+            $responseModel ->data = $usuarios;
             
+            echo json_encode($responseModel);
+
+        }catch(Exception $e){
+            throw $e;
+        }
+    }
+    public function obtenerMensajes($dataPost) {
+        try{
+            $responseModel = new ResponseModel();
+            // Validar campos
+            $idCanal = '';
+            if( empty($dataPost['idCanal']) ) {
+                
+                $this->createException( 'El idCanal es requerido' );
+            }
+            $idCanal = $dataPost['idCanal'];
+            $mensajes = $this->chat_dao -> obtenerMensajesPorCanal($idCanal);
+
+            $responseModel ->success = true;            
+            $responseModel ->data = $mensajes;
+            
+            echo json_encode($responseModel);
+
+        }catch(Exception $e){
+            throw $e;
+        }
+        
+    }
+    public function enviarMensaje($post) {
+        try {
+            $responseModel = new ResponseModel();
+            // Validar campos
+            if( empty($post['idUsuario']) ) {
+                $this->createException( 'El idUsuario es requerido' );
+            }
+            if( empty($post['idCanal']) ) {
+                $this->createException( 'El idCanal es requerido' );
+            }
+            if( empty($post['mensaje']) ) {
+                $this->createException( 'El mensaje es requerido' );
+            }
+            
+            $mensajes = $this->chat_dao -> enviarMensajes(
+                $post['idUsuario'],
+                $post['idCanal'],
+                $post['mensaje']);
+                
+            $responseModel ->success = true;            
+            $responseModel ->data = 'Mensaje enviado con éxito';
+
             echo json_encode($responseModel);
 
         }catch(Exception $e){

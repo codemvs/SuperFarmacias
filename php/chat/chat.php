@@ -19,6 +19,12 @@ try{
             case 'obtener_usuarios':
                 $chatOperations->obtenerUsuarios();
             break;
+            case 'obtener_menesajes':
+                $chatOperations -> obtenerMensajes($_POST);
+                break;
+            case 'enviar_mensaje':
+                $chatOperations -> enviarMensaje($_POST);
+                break;
             default:
             throw new Exception('Request method invalid');  
             break;
