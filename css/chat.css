@@ -1,6 +1,10 @@
 #btnEnviarMensaje {
   cursor: pointer;
 }
+#_usuarios, #_mensajes {
+  max-height: 350px;
+  overflow: auto;
+}
 body {
    background-color: #3498db;
    -webkit-font-smoothing: antialiased;
