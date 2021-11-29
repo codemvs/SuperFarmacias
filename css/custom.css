@@ -4,3 +4,21 @@
     height: 350px;
     /* z-index: 0; */
 }
+._chat_link {
+    position: fixed;
+    bottom: 85px;
+    right: 40px;
+    z-index: 9999;
+    width: 52px;
+    height: 40px;
+    text-align: center;
+    line-height: 40px;
+    background: #d65106;
+    color: #ffffff;
+    cursor: pointer;
+    border: 0;
+    border-radius: 2px;
+    text-decoration: none;
+    transition: opacity 0.2s ease-out;
+    font-size: 30px;
+}

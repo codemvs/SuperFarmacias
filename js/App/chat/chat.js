@@ -1,7 +1,7 @@
 var chat = chat || {
     usuario:null,    
     isUserAdmin:false,
-    refrescarChatSeg: 5,
+    refrescarChatSeg: 20,
     init:()=>{
         $('#mdIniciarChat').modal({backdrop: 'static', keyboard: false});
 
@@ -39,7 +39,7 @@ var chat = chat || {
     },
     btnSalirChat:()=>{
         $('#btnSalirChat').off('click').on('click',()=>{
-            location = 'http://localhost:8080/SuperFarmacia';
+            window.close();
         });
     },
     btnEnviarMensaje: ()=>{
@@ -124,13 +124,15 @@ var chat = chat || {
     chatEventListener:()=>{
         let interval = chat.refrescarChatSeg * 1000;
         setInterval(function(){ 
-            // let seccionChatAbierta = $('#_mensajes .no-gutters').length;
-            // chat.obtenerUsuarios();
-            // if(seccionChatAbierta){
-            //     chat.mostrarMensajesChat();
-            // }
-
+            chat.refresh();
          }, interval);
+    },
+    refresh:()=>{
+        let seccionChatAbierta = $('#_mensajes .no-gutters').length;
+        chat.obtenerUsuarios();
+        if(seccionChatAbierta){
+            chat.mostrarMensajesChat();
+        }
     },
     guardarLocalStorage:(key, data)=> {
         var datajson = JSON.stringify(data);
