@@ -22,3 +22,6 @@
     transition: opacity 0.2s ease-out;
     font-size: 30px;
 }
+._chat_link:hover{
+    color: #ffffff;
+}

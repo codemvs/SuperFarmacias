@@ -56,7 +56,7 @@ var Consultar = Consultar || {
                     email,
                     message
                 }
-                Utils.post('http://localhost:8080/SuperFarmacia/php/send_email.php', data)
+                Utils.post(base+'/php/send_email.php', data)
                 .then((res)=>{                    
                     if(res.success){
                         $("#contactForm")[0].reset();

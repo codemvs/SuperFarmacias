@@ -152,7 +152,7 @@ var chat = chat || {
 
 var chatService = chatService || {
 
-    url : 'http://localhost:8080/SuperFarmacia/php/chat/chat.php',
+    url : base+'/php/salamsg/salamsg.php',
        
     
     sAgregarUsuarioCliente: (data)=>{              

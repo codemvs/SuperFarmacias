@@ -1,5 +1,6 @@
 <?php 
 require 'models/response.model.php';
+include_once 'config/config.php';
 
 require 'libs/PHPMailer-master/src/Exception.php';
 require 'libs/PHPMailer-master/src/PHPMailer.php';
@@ -12,9 +13,6 @@ use PHPMailer\PHPMailer\Exception;
         case 'POST':
             sendEmail();            
             break;
-            case 'GET':
-                echo 'get';
-                break;
         default:
             $responseModel = new ResponseModel();
             $responseModel ->success = false;            
@@ -68,16 +66,25 @@ use PHPMailer\PHPMailer\Exception;
     class SendEmail{
         
         
-        private $userName = 'superfarmacia.contact@gmail.com';//"superfarmacia.test@gmail.com";
-        private $password = 'superfarmacia.contact?51';//"superfarmaciatest?51";
-        private $nombreCorreoServidor = 'Super Farmacias Contacto';
+        private $userName;
+        private $password;
+        private $nombreCorreoServidor;
 
-        private $correoDestinoDelAministrador = 'superfarmacia.test@gmail.com';
-        private $tituloCorreoDestinoDelAministrador = 'Super Farmacias Admin';
+        private $correoDestinoDelAministrador;
+        private $tituloCorreoDestinoDelAministrador;
 
         private $mail; 
         function __construct(){
+            
+            $this->userName = constant('CORREO_SMTP');
+            $this->password = constant('SECRET_CORREO_SMTP');
+            $this->nombreCorreoServidor = constant('NOMBRE_CORREO_SMTP');
+
+            $this->correoDestinoDelAministrador = constant('CORREO_SF_ADMIN');
+            $this->tituloCorreoDestinoDelAministrador = constant('NOMBRE_SF_ADMIN');
+
             $this->initPHPMailer();
+
         }
         private function initPHPMailer(){
             $this->mail = new PHPMailer();

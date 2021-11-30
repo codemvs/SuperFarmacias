@@ -1,4 +1,4 @@
-//var base = $('#baseUrl').attr('href');
+var base = location.origin+'/SuperFarmacia';
 
 // $('.datepicker').datepicker({
 //     format: 'yyyy-mm-dd',            

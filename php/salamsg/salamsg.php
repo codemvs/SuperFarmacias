@@ -1,7 +1,7 @@
 <?php 
-require_once '../models/response.model.php';
+require_once '../models/response.model.php'; 
 
-require_once 'chat.operations.php';
+require_once 'salamsg.operations.php';
 
 try{
     $chatOperations = new ChatOperations();

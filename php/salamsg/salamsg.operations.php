@@ -1,6 +1,6 @@
 <?php 
 require_once '../models/chat/usuario.model.php';
-require_once 'chat.dao.php';
+require_once 'salamsg.dao.php';
 
 class ChatOperations {    
     private $chat_dao;
