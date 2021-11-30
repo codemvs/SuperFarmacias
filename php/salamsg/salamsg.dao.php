@@ -129,7 +129,7 @@ class ChatDAO {
             
 
             $query = 'SELECT c.idCanal, u.idUsuario,u.nombre, u.correo, u.idTipoUsuario,
-                             (SELECT COUNT(1) FROM tblmensaje WHERE idCanal = c.idCanal ) as mensajeNoLeido 
+                             (SELECT COUNT(1) FROM tblmensaje WHERE idCanal = c.idCanal and visto = 0 ) as mensajeNoLeido 
                                 FROM tblcanal c 
                                 INNER JOIN tblusuario u 
                     ON c.idCliente = u.idUsuario
@@ -183,7 +183,24 @@ class ChatDAO {
         }catch(PDOException $ex){
             throw new Exception($ex->getMessage());
         }
+        
+    }
+    public function actualizarEstatusMensajeVisto($idUsuario,$idCanal)
+    {
+        try { 
+            
 
+            $query = 'update tblmensaje set visto = 1 where idCanal = :idCanal;';            
+
+            $respQuery = $this->database->connect()->prepare($query);
+            
+            $respQuery->execute([                
+                'idCanal'=>$idCanal
+            ]);
+            
+        }catch(PDOException $ex){
+            throw new Exception($ex->getMessage());
+        }
         
     }
 }

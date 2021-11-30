@@ -25,6 +25,9 @@ try{
             case 'enviar_mensaje':
                 $chatOperations -> enviarMensaje($_POST);
                 break;
+            case 'act_est_visto':
+                $chatOperations -> actualizarEstatusMensajeVisto($_POST);
+                break;
             default:
             throw new Exception('Request method invalid');  
             break;

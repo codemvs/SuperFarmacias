@@ -126,6 +126,31 @@ class ChatOperations {
             throw $e;
         }
     }
+    public function actualizarEstatusMensajeVisto($post) {
+        try {
+            $responseModel = new ResponseModel();
+            // Validar campos
+            if( empty($post['idUsuario']) ) {
+                $this->createException( 'El idUsuario es requerido' );
+            }
+            if( empty($post['idCanal']) ) {
+                $this->createException( 'El idCanal es requerido' );
+            }
+            
+            $mensajes = $this->chat_dao -> actualizarEstatusMensajeVisto(
+                $post['idUsuario'],
+                $post['idCanal']
+                );
+                
+            $responseModel ->success = true;            
+            $responseModel ->data = 'Se actualizo con exito';
+
+            echo json_encode($responseModel);
+
+        }catch(Exception $e){
+            throw $e;
+        }
+    }
     private function createException($message){
         throw new Exception($message);
     }

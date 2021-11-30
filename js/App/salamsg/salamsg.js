@@ -53,7 +53,7 @@ var chat = chat || {
                         idCanal: chat.usuario.idCanal,
                         mensaje : mensaje
                     };
-                    chatService.sEnviarMensaje(data);
+                    chatService.sEnviarMensaje(data).then((x)=>chat.refresh());
                 }
             }
             $('#txtMensaje').val('');
@@ -68,6 +68,9 @@ var chat = chat || {
             $( '.chat-bubble' ).hide('slow').show('slow');    
             chat.usuario.idCanal = this.dataset['idcanal'];
             chat.mostrarMensajesChat();
+            if(chat.isUserAdmin){
+                chat.acutalizarEstatusVisto();
+            }
             
         });
     },
@@ -85,6 +88,16 @@ var chat = chat || {
                 $('#_mensajes').html(htmlMensaje);
             });
     },
+    acutalizarEstatusVisto:()=>{
+        let data = {
+            idUsuario: chat.usuario.idUsuario,
+            idCanal: chat.usuario.idCanal            
+        };
+        
+        chatService.sActualizarEstatusVisto(data).then(x=>{
+            chat.obtenerUsuarios();
+        });
+    },
     obtenerUsuarios: ()=>{
         chatService.sObtenerUsuarios().then(usuarios=>{
 
@@ -98,8 +111,9 @@ var chat = chat || {
     },
     usuarioHtml:(dato)=>{
         
-        let mensajesNoLeidos = '';/*dato.mensajeNoLeido > 0 ? 
-                                                    `<span class="material-icons">notifications</span> ${dato.mensajeNoLeido}`: '';*/
+        let mensajesNoLeidos = dato.mensajeNoLeido > 0 && chat.isUserAdmin? 
+                                                    `<span class="material-icons">notifications</span> ${dato.mensajeNoLeido}`: '';
+
         let nombrechat = chat.isUserAdmin ? 'Super Farmacias - '+dato.nombre:
         dato.nombre + ' - Super Farmacias'; 
         let html = `<div class="friend-drawer friend-drawer--onhover" data-idcanal='${dato.idCanal}'>		  
@@ -212,6 +226,25 @@ var chatService = chatService || {
         var $d = $.Deferred();
 
         data['method']='enviar_mensaje';
+
+        Utils.post(chatService.url, data).then((res)=>{            
+            if(res.success){
+                res = res.data;
+                $d.resolve(res);
+            }else{
+                chatService.Error(res.messageError);
+                $d.reject();
+            }            
+        }).fail((err)=>{            
+            chatService.Error('Ocurrió un error: '+err.message);
+            $d.reject();
+        });
+        return $d.promise();
+    },
+    sActualizarEstatusVisto:(data)=>{      
+        var $d = $.Deferred();
+
+        data['method']='act_est_visto';
 
         Utils.post(chatService.url, data).then((res)=>{            
             if(res.success){
