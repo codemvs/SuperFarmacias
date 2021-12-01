@@ -198,124 +198,39 @@ var chat = chat || {
 
 var chatService = chatService || {
 
-    url : base+'/php/salamsg/salamsg.php',
-       
+    url : base+'/php/salamsg/salamsg.php',       
     
-    sAgregarUsuarioCliente: (data)=>{              
-        var $d = $.Deferred();
+    sAgregarUsuarioCliente: (data)=>{                      
         data['method']='agregar_usuario_cliente';
-        Utils.post(chatService.url, data).then((res)=>{               
-            if(res.success){
-                res = res.data;
-                $d.resolve(res);
-            }else{
-                chatService.Error(res.messageError);
-                $d.reject();
-            }            
-        }).fail((err)=>{            
-            chatService.Error('Ocurrió un error: '+err.message);
-            $d.reject();
-        });
-        return $d.promise();
+        return chatService.sendPost(data);
     },
-    sObtenerUsuarios:()=>{      
-        var $d = $.Deferred();
+    sObtenerUsuarios:()=>{              
         data={method:'obtener_usuarios'};
-        Utils.post(chatService.url, data).then((res)=>{            
-            if(res.success){
-                res = res.data;
-                $d.resolve(res);
-            }else{
-                chatService.Error(res.messageError);
-                $d.reject();
-            }            
-        }).fail((err)=>{            
-            chatService.Error('Ocurrió un error: '+err.message);
-            $d.reject();
-        });
-        return $d.promise();
+        return chatService.sendPost(data);
     },
     sObtenerMensajes:(data)=>{      
-        var $d = $.Deferred();
-
         data['method']='obtener_menesajes';
-
-        Utils.post(chatService.url, data).then((res)=>{            
-            if(res.success){
-                res = res.data;
-                $d.resolve(res);
-            }else{
-                chatService.Error(res.messageError);
-                $d.reject();
-            }            
-        }).fail((err)=>{            
-            chatService.Error('Ocurrió un error: '+err.message);
-            $d.reject();
-        });
-        return $d.promise();
+        return chatService.sendPost(data);
     },
     sEnviarMensaje:(data)=>{      
-        var $d = $.Deferred();
-
         data['method']='enviar_mensaje';
-
-        Utils.post(chatService.url, data).then((res)=>{            
-            if(res.success){
-                res = res.data;
-                $d.resolve(res);
-            }else{
-                chatService.Error(res.messageError);
-                $d.reject();
-            }            
-        }).fail((err)=>{            
-            chatService.Error('Ocurrió un error: '+err.message);
-            $d.reject();
-        });
-        return $d.promise();
+        return chatService.sendPost(data);
     },
-    sActualizarEstatusVisto:(data)=>{      
-        var $d = $.Deferred();
-
+    sActualizarEstatusVisto:(data)=>{              
         data['method']='act_est_visto';
-
-        Utils.post(chatService.url, data).then((res)=>{            
-            if(res.success){
-                res = res.data;
-                $d.resolve(res);
-            }else{
-                chatService.Error(res.messageError);
-                $d.reject();
-            }            
-        }).fail((err)=>{            
-            chatService.Error('Ocurrió un error: '+err.message);
-            $d.reject();
-        });
-        return $d.promise();
+        return chatService.sendPost(data);
     },
     sEliminarMensaje:(data)=>{      
-        var $d = $.Deferred();
-
         data['method']='eliminar_msg';
-
-        Utils.post(chatService.url, data).then((res)=>{            
-            if(res.success){
-                res = res.data;
-                $d.resolve(res);
-            }else{
-                chatService.Error(res.messageError);
-                $d.reject();
-            }            
-        }).fail((err)=>{            
-            chatService.Error('Ocurrió un error: '+err.message);
-            $d.reject();
-        });
-        return $d.promise();
+        return chatService.sendPost(data);
     },
     sValidarUsuario:(data)=>{      
-        var $d = $.Deferred();
-
         data['method']='validar_correo';
-
+        return chatService.sendPost(data);
+    },
+    sendPost:(data)=>{
+        var $d = $.Deferred();
+        
         Utils.post(chatService.url, data).then((res)=>{            
             if(res.success){
                 res = res.data;
