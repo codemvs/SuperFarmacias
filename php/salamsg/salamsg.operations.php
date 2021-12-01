@@ -171,6 +171,34 @@ class ChatOperations {
             throw $e;
         }
     }
+    public function validarCorreo($post) {
+        try {
+            $responseModel = new ResponseModel();
+            $correo = 'correo';
+            // Validar campos
+            if( empty($post[$correo]) ) {
+                $this->createException( 'El correo es requerido' );
+            }
+            if( !filter_var($post[$correo],FILTER_VALIDATE_EMAIL) ) {                
+                $this->createException( 'El formato del correo es inválido' );
+            }
+            $usuario = $this->chat_dao -> buscarUsuarioPorCorreoDao(                
+                $post[$correo]
+                );
+            $usuarioExiste = $usuario != null;
+
+            $responseModel ->success = true;            
+            $responseModel ->data = [
+                "usrExiste" => $usuarioExiste
+            ];
+
+            echo json_encode($responseModel);
+
+        }catch(Exception $e){
+            throw $e;
+        }
+    }
+    
     private function createException($message){
         throw new Exception($message);
     }

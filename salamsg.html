@@ -4,14 +4,14 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Document</title>
-	<!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css" integrity="sha384-zCbKRCUGaJDkqS1kPbPd7TveP5iyJE0EjAuZQTgFLD2ylzuqKfdKlfG/eSrtxUkn" crossorigin="anonymous"> -->
+	
 	 <!-- Bootstrap CSS -->
 	 <link rel="stylesheet" href="css/bootstrap.min.css">  
 
 	<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 	<link rel="stylesheet" type="text/css" href="./css/salamsg.css">
 
-	<!-- <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script> -->
+	
 	
 </head>
 <body>
@@ -28,19 +28,19 @@
   
 		<!-- Modal body -->
 		<div class="modal-body">
-			<div class="form-group">
-				<label for="txtNombre">Nombre:</label>
-				<input id="txtNombre" class="form-control" placeholder="eje. Juanito Perez">
+			<div class="form-group" id="div-nombre" style="display: none;">
+				<label for="txtNombre">Agregue un nombre:</label>
+				<input id="txtNombre" class="form-control" placeholder="Eje. Juanito Perez">
 			</div>
-			<div class="form-group">
-				<label for="txtCorreo">Correo:</label>
+			<div class="form-group" id="div-correo">
+				<label for="txtCorreo">Ingrese su correo electrónico:</label>
 				<input id="txtCorreo" class="form-control" placeholder="eje. correo@example.com" value="superfarmaciachicontepec@gmail.com">
 			</div>
 		</div>
   
 		<!-- Modal footer -->
 		<div class="modal-footer">
-			<button type="button" id="btnIniciarChat" class="btn btn-primary">Iniciar chat</button>
+			<button type="button" id="btnIniciarChat" class="btn btn-primary" data-pantalla="1">Continuar</button>
 		  	<button type="button" id="btnSalirChat" class="btn btn-danger">Salir</button>
 		</div>
   

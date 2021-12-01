@@ -19,22 +19,44 @@ var chat = chat || {
         $('#btnIniciarChat').off('click').on('click',()=>{
             let nombre = $('#txtNombre').val().trim();
             let correo = $('#txtCorreo').val().trim();
+
+            $btnInicio = $('#btnIniciarChat');
+            let pantalla = $btnInicio.attr('data-pantalla');
+
             let usrLogin = {
                 nombre:nombre,
                 correo:correo
             };
-            chatService.sAgregarUsuarioCliente(usrLogin).then(usuario =>{
-                //console.log(usuario);
-                $('#mdIniciarChat').modal('hide');
-                //chat.guardarLocalStorage(usuario.correo, usuario);
-                chat.usuario =usuario;
-                chat.isUserAdmin = usuario.idUsuario == 1;
-                
-                let tituloTienda = chat.isUserAdmin ? 'Super Farmacia-Admin':'Super Farmacia-Cliente'
-                $("#nombre-tienda").html(tituloTienda);
-
-                chat.iniciarEventos();
-            });
+            if(pantalla == 1){
+                chatService.sValidarUsuario(usrLogin).then(x =>{
+                    if(x.usrExiste){
+                        usrLogin.nombre = ':)';
+                        chat.inciarChat(usrLogin);
+                    }else{
+                        $('#div-correo').hide();
+                        $('#div-nombre').show();
+                        
+                        $btnInicio.attr('data-pantalla',2);
+                        $btnInicio.text("Iniciar chat");
+                    }
+                });    
+            }else{
+                chat.inciarChat(usrLogin);
+            }            
+            
+        });
+    },
+    inciarChat:(dataLogin)=>{
+        chatService.sAgregarUsuarioCliente(dataLogin).then(usuario =>{
+            //console.log(usuario);
+            $('#mdIniciarChat').modal('hide');
+            //chat.guardarLocalStorage(usuario.correo, usuario);
+            chat.usuario =usuario;
+            chat.isUserAdmin = usuario.idUsuario == 1;
+            
+            let tituloTienda = chat.isUserAdmin ? 'Super Farmacia-Admin':'Super Farmacia-Cliente'
+            $("#nombre-tienda").html(tituloTienda);
+            chat.iniciarEventos();
         });
     },
     btnSalirChat:()=>{
@@ -274,6 +296,25 @@ var chatService = chatService || {
         var $d = $.Deferred();
 
         data['method']='eliminar_msg';
+
+        Utils.post(chatService.url, data).then((res)=>{            
+            if(res.success){
+                res = res.data;
+                $d.resolve(res);
+            }else{
+                chatService.Error(res.messageError);
+                $d.reject();
+            }            
+        }).fail((err)=>{            
+            chatService.Error('Ocurrió un error: '+err.message);
+            $d.reject();
+        });
+        return $d.promise();
+    },
+    sValidarUsuario:(data)=>{      
+        var $d = $.Deferred();
+
+        data['method']='validar_correo';
 
         Utils.post(chatService.url, data).then((res)=>{            
             if(res.success){

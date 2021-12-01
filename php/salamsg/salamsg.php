@@ -31,6 +31,9 @@ try{
             case 'eliminar_msg':
                 $chatOperations -> eliminarMensaje($_POST);
                 break;
+            case 'validar_correo':
+                $chatOperations -> validarCorreo($_POST);
+                break;
             default:
             throw new Exception('Request method invalid');  
             break;
