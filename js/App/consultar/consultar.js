@@ -6,7 +6,7 @@ var Consultar = Consultar || {
     },
     RenderizarMapa: ()=>{
         //Dos Caminos 21, 92700 Benito Juárez, Ver.
-        let markerDescription = "<div style='text-align:center'><b >Super Farmacia</b> </br> Dos Caminos 21, 92700 Benito Juárez, Ver.</div>";
+        let markerDescription = "<div style='text-align:center'><b >Super Farmacia</b> </br> Dos Caminos 21, 92700 Chicontepec, Ver.</div>";
 		let positionMarker = {            
 			latitud: 20.969042369391286,
 			longitud: -98.18750587595068

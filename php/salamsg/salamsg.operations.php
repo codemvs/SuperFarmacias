@@ -151,6 +151,26 @@ class ChatOperations {
             throw $e;
         }
     }
+    public function eliminarMensaje($post) {
+        try {
+            $responseModel = new ResponseModel();
+            // Validar campos
+            if( empty($post['idMensaje']) ) {
+                $this->createException( 'El idMensaje es requerido' );
+            }
+            $mensajes = $this->chat_dao -> eliminarMensaje(                
+                $post['idMensaje']
+                );
+                
+            $responseModel ->success = true;            
+            $responseModel ->data = 'Se elimino con exito';
+
+            echo json_encode($responseModel);
+
+        }catch(Exception $e){
+            throw $e;
+        }
+    }
     private function createException($message){
         throw new Exception($message);
     }

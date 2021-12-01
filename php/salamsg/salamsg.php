@@ -28,6 +28,9 @@ try{
             case 'act_est_visto':
                 $chatOperations -> actualizarEstatusMensajeVisto($_POST);
                 break;
+            case 'eliminar_msg':
+                $chatOperations -> eliminarMensaje($_POST);
+                break;
             default:
             throw new Exception('Request method invalid');  
             break;

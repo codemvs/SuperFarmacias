@@ -203,5 +203,23 @@ class ChatDAO {
         }
         
     }
+    public function eliminarMensaje($idMensaje)
+    {
+        try { 
+            
+
+            $query = 'delete from tblmensaje where idMensaje = :idMensaje;';            
+
+            $respQuery = $this->database->connect()->prepare($query);
+            
+            $respQuery->execute([                
+                'idMensaje'=>$idMensaje
+            ]);
+            
+        }catch(PDOException $ex){
+            throw new Exception($ex->getMessage());
+        }
+        
+    }
 }
 ?> 

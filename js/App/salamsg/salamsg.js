@@ -57,10 +57,18 @@ var chat = chat || {
                 }
             }
             $('#txtMensaje').val('');
-            
-            
-            
         });
+    },
+    eliminarComentario:(target)=>{
+        if(confirm('¿Está seguro que desea eliminar este comentario?')){
+            let $htmlMensaje = $(target).closest('.no-gutters');
+            let data = {
+                idMensaje: $htmlMensaje.attr('data-idmensaje')
+            };
+            chatService.sEliminarMensaje(data).then(x=>{
+                $htmlMensaje.remove();
+            });            
+        }        
     },
     iniciarEstiloVista:()=>{
         $( document ).off('click').on('click','.friend-drawer--onhover',  function() {	
@@ -80,9 +88,9 @@ var chat = chat || {
                 var htmlMensaje = mensajes.map(m => {
                     if(m.idUsuario == chat.usuario.idUsuario)
                     {
-                        return chat.mensajesHtml(true,m.mensaje);
+                        return chat.mensajesHtml(true,m.mensaje, m.idMensaje);
                     }else{
-                        return chat.mensajesHtml(false,m.mensaje);
+                        return chat.mensajesHtml(false,m.mensaje,m.idMensaje);
                     }
                 });
                 $('#_mensajes').html(htmlMensaje);
@@ -128,10 +136,12 @@ var chat = chat || {
                     <hr>`;
                     return html;
     },
-    mensajesHtml: (soyYo, mensaje)=>{                
-            return ` <div class="row no-gutters">
+    mensajesHtml: (soyYo, mensaje, idMensaje)=>{                
+        let botonEliminar = soyYo ? '<button type="button" class="close" onclick="chat.eliminarComentario(this);" title="Eliminar comentario"><span aria-hidden="true">&times;</span></button>':'';
+            return ` <div class="row no-gutters" data-idMensaje="${idMensaje}">
                         <div class="col-md-6 ${soyYo?'':'offset-md-6 bubble-right'}">
-                        <div class="chat-bubble chat-bubble--${soyYo?'left':'right'}">${mensaje}</div>
+                            ${botonEliminar}
+                            <div class="chat-bubble chat-bubble--${ soyYo ? 'left': 'right' }">${mensaje}</div>
                         </div>
                     </div>`;
     },
@@ -245,6 +255,25 @@ var chatService = chatService || {
         var $d = $.Deferred();
 
         data['method']='act_est_visto';
+
+        Utils.post(chatService.url, data).then((res)=>{            
+            if(res.success){
+                res = res.data;
+                $d.resolve(res);
+            }else{
+                chatService.Error(res.messageError);
+                $d.reject();
+            }            
+        }).fail((err)=>{            
+            chatService.Error('Ocurrió un error: '+err.message);
+            $d.reject();
+        });
+        return $d.promise();
+    },
+    sEliminarMensaje:(data)=>{      
+        var $d = $.Deferred();
+
+        data['method']='eliminar_msg';
 
         Utils.post(chatService.url, data).then((res)=>{            
             if(res.success){
