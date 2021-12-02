@@ -78,6 +78,7 @@ CREATE TABLE `tblusuario` (
   `idUsuario` int(11) NOT NULL,
   `nombre` varchar(100) COLLATE utf8_spanish_ci NOT NULL,
   `correo` varchar(100) COLLATE utf8_spanish_ci NOT NULL,
+  `password` varchar(50) COLLATE utf8_spanish_ci DEFAULT NULL,
   `idTipoUsuario` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 
@@ -85,8 +86,8 @@ CREATE TABLE `tblusuario` (
 -- Volcado de datos para la tabla `tblusuario`
 --
 
-INSERT INTO `tblusuario` (`idUsuario`, `nombre`, `correo`, `idTipoUsuario`) VALUES
-(1, 'Super Farmacias Chicontepec', 'superfarmaciachicontepec@gmail.com', 1);
+INSERT INTO `tblusuario` (`idUsuario`, `nombre`, `correo`, `password`, `idTipoUsuario`) VALUES
+(1, 'Super Farmacias Chicontepec', 'superfarmaciachicontepec@gmail.com', '5uperF4rmac1aCh1c0ntepec?51', 1);
 
 --
 -- Índices para tablas volcadas

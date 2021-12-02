@@ -62,12 +62,18 @@ class ChatDAO {
     {        
         $con = null;
         try {             
-            $query = 'INSERT INTO tblmensaje(idUsuario, idCanal,mensaje) 
-            VALUES (:idUsuario,:idCanal,:mensaje);';            
             $con = $this->database->connect();
-            $respQuery = $con->prepare($query);
 
             $con ->beginTransaction();
+
+            $query = 'INSERT INTO tblmensaje(idUsuario, idCanal,mensaje) 
+            VALUES (:idUsuario,:idCanal,:mensaje);';        
+            $res =$this->existeCanal($idCanal);
+            if( $res != 1 ){
+                throw new Exception('Este usuario ya no esta disponible para mensajes ');
+            }
+                       
+            $respQuery = $con->prepare($query);
             $respQuery->execute([                
                 'idUsuario'=>$idUsuario,
                 'idCanal'=>$idCanal,
@@ -220,6 +226,86 @@ class ChatDAO {
             throw new Exception($ex->getMessage());
         }
         
+    }
+    public function validarUsrPass($correo, $passwd){
+        try { 
+
+            $query = 'SELECT count(1) as total FROM tblusuario where correo = :correo and password = :passwd;';            
+
+            $respQuery = $this->database->connect()->prepare($query);
+            
+            $respQuery->execute([                
+                'correo'=>$correo,
+                'passwd'=>$passwd
+            ]);
+            $respQuery->setFetchMode(PDO::FETCH_ASSOC);
+            $totalEncontrado = $respQuery->rowCount();
+            if($totalEncontrado == 0){
+                return null;
+            }
+            return $respQuery->fetchAll()[0]['total'];
+        }catch(PDOException $ex){
+            throw new Exception($ex->getMessage());
+        }
+    }
+    public function eliminarChat($idUsuario, $idCanal)
+    {        
+        $con = null;
+        try {             
+            $con = $this->database->connect();
+            $con ->beginTransaction();
+
+            $query = 'DELETE FROM tblcanal WHERE idCanal = :idCanal;';               
+            $respQuery = $con->prepare($query);                       
+            $respQuery->execute([                
+                'idCanal'=>$idCanal
+            ]);
+
+            $query = 'DELETE FROM tblmensaje WHERE idCanal = :idCanal;';               
+            $respQuery = $con->prepare($query);                       
+            $respQuery->execute([                
+                'idCanal'=>$idCanal
+            ]);
+
+            $query = 'DELETE FROM tblusuario WHERE idUsuario = :idUsuario;';               
+            $respQuery = $con->prepare($query);                       
+            $respQuery->execute([                                                      
+                'idUsuario'=>$idUsuario
+            ]);
+
+            $con->commit();
+
+        }catch(PDOException $ex){
+            if($con!=null){
+                $con ->rollBack();
+            }
+            throw new Exception($ex->getMessage());
+        }
+    }
+    private function existeCanal($idCanal){
+        try{
+
+        $query = 'SELECT COUNT(1) totalCanal FROM tblcanal WHERE idCanal = :idCanal;';            
+
+            $respQuery = $this->database->connect()->prepare($query);
+            
+            $respQuery->execute([                
+                'idCanal'=>$idCanal                
+            ]);
+            $respQuery->setFetchMode(PDO::FETCH_ASSOC);
+            $totalEncontrado = $respQuery->rowCount();
+            if($totalEncontrado == 0){
+                return null;
+            }
+            $totalCanalEncontrado = $respQuery->fetchAll()[0]['totalCanal'];
+            return $totalCanalEncontrado > 0;
+
+        }catch(PDOException $ex){
+            if($con!=null){
+                $con ->rollBack();
+            }
+            throw new Exception($ex->getMessage());
+        }
     }
 }
 ?> 

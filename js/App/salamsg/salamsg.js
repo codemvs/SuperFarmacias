@@ -19,29 +19,49 @@ var chat = chat || {
         $('#btnIniciarChat').off('click').on('click',()=>{
             let nombre = $('#txtNombre').val().trim();
             let correo = $('#txtCorreo').val().trim();
+            let contrasenia = $('#txtContrasenia').val().trim();
 
             $btnInicio = $('#btnIniciarChat');
             let pantalla = $btnInicio.attr('data-pantalla');
 
             let usrLogin = {
                 nombre:nombre,
-                correo:correo
+                correo:correo,
+                contrasenia: contrasenia
             };
             if(pantalla == 1){
                 chatService.sValidarUsuario(usrLogin).then(x =>{
                     if(x.usrExiste){
-                        usrLogin.nombre = ':)';
-                        chat.inciarChat(usrLogin);
+                        if(x.isAdmin){
+                            $('.toogle-control').hide();
+                            $('#div-contrasenia').show();
+                            
+                            $btnInicio.attr('data-pantalla',3);
+                            $btnInicio.text("Iniciar chat");
+                        } else{
+                            usrLogin.nombre = ':)';
+                            chat.inciarChat(usrLogin);
+                        }
+                        
                     }else{
-                        $('#div-correo').hide();
+                        $('.toogle-control').hide();
                         $('#div-nombre').show();
                         
                         $btnInicio.attr('data-pantalla',2);
                         $btnInicio.text("Iniciar chat");
                     }
                 });    
-            }else{
+            }else if(pantalla == 2){
                 chat.inciarChat(usrLogin);
+            }else if(pantalla == 3){
+                usrLogin.nombre = ':)';                
+                chatService.sLogin(usrLogin).then(res => {
+                    if(res.usrValido){
+                        chat.inciarChat(usrLogin);
+                    }else{
+                        location.reload();
+                    }
+                }).fail(x => location.reload());
             }            
             
         });
@@ -107,15 +127,20 @@ var chat = chat || {
     mostrarMensajesChat:()=>{
         var data = {idCanal : chat.usuario.idCanal };
             chatService.sObtenerMensajes(data).then(mensajes=>{
-                var htmlMensaje = mensajes.map(m => {
-                    if(m.idUsuario == chat.usuario.idUsuario)
-                    {
-                        return chat.mensajesHtml(true,m.mensaje, m.idMensaje);
-                    }else{
-                        return chat.mensajesHtml(false,m.mensaje,m.idMensaje);
-                    }
-                });
-                $('#_mensajes').html(htmlMensaje);
+                if(mensajes){
+                    var htmlMensaje = mensajes.map(m => {
+                        if(m.idUsuario == chat.usuario.idUsuario)
+                        {
+                            return chat.mensajesHtml(true,m.mensaje, m.idMensaje);
+                        }else{
+                            return chat.mensajesHtml(false,m.mensaje,m.idMensaje);
+                        }
+                    });
+                    $('#_mensajes').html(htmlMensaje);
+                }else{
+                    $('#_mensajes').children().remove();
+                }
+                
             });
     },
     acutalizarEstatusVisto:()=>{
@@ -130,23 +155,30 @@ var chat = chat || {
     },
     obtenerUsuarios: ()=>{
         chatService.sObtenerUsuarios().then(usuarios=>{
-
-            if(!chat.isUserAdmin){
-                usuarios = usuarios.filter(x => x.correo === chat.usuario.correo);
+            if(usuarios){
+                if(!chat.isUserAdmin){
+                    usuarios = usuarios.filter(x => x.correo === chat.usuario.correo);
+                }
+    
+                var html = usuarios.map(x => chat.usuarioHtml(x));
+                $('#_usuarios').html(html);
+            }else{
+                $('#_usuarios').children().remove();
+                $('#_mensajes').children().remove();
             }
-
-            var html = usuarios.map(x => chat.usuarioHtml(x));
-            $('#_usuarios').html(html);
+            
         });
     },
     usuarioHtml:(dato)=>{
         
         let mensajesNoLeidos = dato.mensajeNoLeido > 0 && chat.isUserAdmin? 
-                                                    `<span class="material-icons">notifications</span> ${dato.mensajeNoLeido}`: '';
+                                                    `<span class="material-icons">notifications</span><sup>${dato.mensajeNoLeido}</sup>`: '';
+        let btnEliminar = chat.isUserAdmin ? '<button type="button" class="close" onclick="chat.btnEliminarChat(this);" title="Eliminar chat"><span class="material-icons">delete</span></button>':'';
 
         let nombrechat = chat.isUserAdmin ? 'Super Farmacias - '+dato.nombre:
         dato.nombre + ' - Super Farmacias'; 
-        let html = `<div class="friend-drawer friend-drawer--onhover" data-idcanal='${dato.idCanal}'>		  
+        let html = `<div class="friend-drawer friend-drawer--onhover" data-idcanal='${dato.idCanal}' data-idusuario='${dato.idUsuario}'>	
+                        ${btnEliminar}	  
                         <div class="text">
                         <h6>${nombrechat}</h6>
                         <p class="text-muted">click para ver mensajes</p>
@@ -166,6 +198,22 @@ var chat = chat || {
                             <div class="chat-bubble chat-bubble--${ soyYo ? 'left': 'right' }">${mensaje}</div>
                         </div>
                     </div>`;
+    },
+    btnEliminarChat:(target)=>{
+        let $padreHtml = $(target).closest('.friend-drawer');
+        let idCanal = $($padreHtml[0]).attr('data-idcanal');
+        let idUsuario = $($padreHtml[0]).attr('data-idusuario');
+        let data = {
+            idCanal : idCanal,
+            idUsuario: idUsuario
+        };
+        if(confirm('¿Está seguro que desea eliminar este chat?')){
+            chatService.sDeleteChat(data).then(res => {                
+                $padreHtml.remove();
+                $('#_mensajes').children().remove();
+                chat.refresh();
+            });
+        }
     },
     chatEventListener:()=>{
         let interval = chat.refrescarChatSeg * 1000;
@@ -226,6 +274,14 @@ var chatService = chatService || {
     },
     sValidarUsuario:(data)=>{      
         data['method']='validar_correo';
+        return chatService.sendPost(data);
+    },
+    sDeleteChat:(data)=>{      
+        data['method']='eliminar_chat';
+        return chatService.sendPost(data);
+    },
+    sLogin:(data)=>{      
+        data['method']='login';
         return chatService.sendPost(data);
     },
     sendPost:(data)=>{

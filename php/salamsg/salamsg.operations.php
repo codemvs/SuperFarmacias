@@ -186,11 +186,81 @@ class ChatOperations {
                 $post[$correo]
                 );
             $usuarioExiste = $usuario != null;
+            $isAdmin = null;
+            if($usuarioExiste){
+                $isAdmin =  ($usuario->idTipoUsuario == 1);
+            }
 
             $responseModel ->success = true;            
             $responseModel ->data = [
-                "usrExiste" => $usuarioExiste
+                "usrExiste" => $usuarioExiste,
+                "isAdmin" =>$isAdmin
             ];
+
+            echo json_encode($responseModel);
+
+        }catch(Exception $e){
+            throw $e;
+        }
+    }
+    public function validarUsrPass($post) {
+        try {
+            $responseModel = new ResponseModel();
+            $correo = 'correo';
+            $passwd = 'contrasenia';
+            // Validar campos
+            if( empty($post[$correo]) ) {
+                $this->createException( 'El correo es requerido' );
+            }
+            if( !filter_var($post[$correo],FILTER_VALIDATE_EMAIL) ) {                
+                $this->createException( 'El formato del correo es inválido' );
+            }
+            if( empty($post[$passwd]) ) {
+                $this->createException( 'La contrasenia es requerido' );
+            }
+
+            $total = $this->chat_dao -> validarUsrPass(                
+                $post[$correo],
+                $post[$passwd]
+                );
+            $usuarioExiste = $total > 0;
+
+            if(!$usuarioExiste){
+                $this->createException( 'Credenciales incorrectos' );
+            }
+
+            $responseModel ->success = true;            
+            $responseModel ->data = [
+                "usrValido" => $usuarioExiste
+            ];
+
+            echo json_encode($responseModel);
+
+        }catch(Exception $e){
+            throw $e;
+        }
+    }
+    public function eliminarChat($post) {
+        try {
+            $responseModel = new ResponseModel();
+            $idUsuario = 'idUsuario';
+            $idCanal = 'idCanal';
+            // Validar campos
+            if( empty($post[$idUsuario]) ) {
+                $this->createException( 'El idUsuario es requerido' );
+            }
+            if( empty($post[$idCanal]) ) {
+                $this->createException( 'El idCanal es requerido' );
+            }
+
+            $total = $this->chat_dao -> eliminarChat(                
+                $post[$idUsuario],
+                $post[$idCanal]
+                );
+            
+
+            $responseModel ->success = true;            
+            $responseModel ->data = 'Se ha eliminado con exito';
 
             echo json_encode($responseModel);
 

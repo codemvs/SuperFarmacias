@@ -4,6 +4,7 @@
 #_usuarios, #_mensajes {
   max-height: 350px;
   overflow: auto;
+  width: 100%;
 }
 body {
    background-color: #3498db;
